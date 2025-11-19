@@ -1,61 +1,12 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  InputBase,
-} from "@mui/material";
 import { AiFillHome } from "react-icons/ai";
 import { PiWarningCircleFill } from "react-icons/pi";
 import { IoIosContact } from "react-icons/io";
 import { FaMessage } from "react-icons/fa6";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import { userContext } from "../../App";
-import { styled, alpha } from "@mui/material/styles";
 import { CiSearch } from "react-icons/ci";
-
-import "./nav.css";
-
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const SearchInput = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
+import { userContext } from "../../App";
 
 const Nav = () => {
   const {
@@ -63,80 +14,88 @@ const Nav = () => {
     isLoggedIn,
     userPersonal,
     searchTerm,
-    setSearchTerm,
+    setSearchTerm
   } = useContext(userContext);
 
-  const handleSearchChange = (event) => {
-    console.log("Performing search for:", event.target.value);
-    setSearchTerm(event.target.value);
-  };
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
-    <>
-      {isLoggedIn && (
-        <AppBar position="static" color="inherit" className="marg">
-          <Toolbar>
-            <img
-              src="https://i.ibb.co/tDmLH5H/logo.png"
-              alt="Logo"
-              className="logo"
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-3 sm:flex-row sm:items-center sm:gap-6">
+        <Link to="/" className="flex items-center gap-3">
+          <img
+            src="https://i.ibb.co/tDmLH5H/logo.png"
+            alt="RA Job logo"
+            className="h-10 w-10 rounded-xl border border-slate-100 object-cover"
+          />
+          <span className="font-display text-lg font-semibold tracking-tight text-ink">
+            RA Job
+          </span>
+        </Link>
+
+        <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <CiSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-softer" />
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search roles, companies, locations..."
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 pl-12 pr-4 font-medium text-ink placeholder:text-slate-400 focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/30"
             />
+          </div>
 
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <Link to="/" className="nav-link">
-                <AiFillHome className="home" />
-              </Link>
-            </Typography>
-            <Search>
-              <SearchIconWrapper>
-                <CiSearch />
-              </SearchIconWrapper>
-              <SearchInput
-                placeholder="Search"
-                inputProps={{ "aria-label": "search" }}
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-            </Search>
-
-            <Button color="inherit" to="/newJob"></Button>
-            <Button color="inherit">
-              <Link to="about">
-                <PiWarningCircleFill className="con" />
-              </Link>
-            </Button>
-            <Button color="inherit">
-              <Link to="/job">
-                <FaMessage className="con" />
-              </Link>
-            </Button>
-            <Button color="inherit">
-              <Link to="/login">
-                {userPersonal.photo ? (
-                  <img
-                    src={userPersonal.photo}
-                    className="rounded-circle mr-2"
-                    width="20"
-                    height="20"
-                    alt="User"
-                  />
-                ) : (
-                  <IoIosContact className="con" />
-                )}
-              </Link>
-            </Button>
-            <Button
-              onClick={() => {
-                logout();
-              }}
+          <nav className="flex items-center justify-between gap-2 sm:justify-end">
+            <Link
+              to="/"
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-transparent text-2xl text-ink hover:border-slate-200 hover:bg-slate-50"
+              aria-label="Home"
             >
-              {" "}
-              <RiLogoutCircleRLine />
-            </Button>
-          </Toolbar>
-        </AppBar>
-      )}
-    </>
+              <AiFillHome />
+            </Link>
+            <Link
+              to="/about"
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-transparent text-2xl text-ink hover:border-slate-200 hover:bg-slate-50"
+              aria-label="About"
+            >
+              <PiWarningCircleFill />
+            </Link>
+            <Link
+              to="/job"
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-transparent text-2xl text-ink hover:border-slate-200 hover:bg-slate-50"
+              aria-label="Jobs"
+            >
+              <FaMessage />
+            </Link>
+            <Link
+              to="/login"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm hover:-translate-y-0.5 hover:shadow"
+              aria-label="Account"
+            >
+              {userPersonal.photo ? (
+                <img
+                  src={userPersonal.photo}
+                  alt={userPersonal.FirstName || "User avatar"}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <IoIosContact className="text-2xl text-ink" />
+              )}
+            </Link>
+            <button
+              type="button"
+              onClick={logout}
+              className="group flex items-center gap-2 rounded-2xl bg-ink px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:bg-ink/90"
+            >
+              <RiLogoutCircleRLine className="text-lg" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </header>
   );
 };
 

@@ -1,7 +1,5 @@
-import "./App.css";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
-import axios from "axios";
 import Register from "./components/register/register";
 import Login from "./components/login/Login";
 import { createContext, useState } from "react";
@@ -23,7 +21,7 @@ function App() {
   const [userId, setUserId] = useState(localStorage.getItem("userId") || "");
   const [userPersonal, setUserPersonal] = useState(() => {
     const storageUserPersonal = localStorage.getItem("user");
-    try {
+    try { 
       return JSON.parse(storageUserPersonal) || {};
     } catch (error) {
       console.error("Error parsing userPersonal:", error);
@@ -59,7 +57,7 @@ function App() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("userId");
-    navigate("/login")
+    navigate("/login");
   };
 
   return (
@@ -116,26 +114,28 @@ function App() {
           setDashBoard
         }}
       >
-        <div className="App">
+        <div className="min-h-screen bg-slate-50 text-ink">
           <Nav />
+          <main className="mx-auto max-w-6xl px-4 pb-10 pt-6">
+            <Routes>
+              <Route path="/about" element={<About />} />
+              <Route path="/user/:id" element={<User />} />
+              <Route path="/job/:id" element={<JobDetails />} />
+              <Route
+                path="/job"
+                exact
+                element={isLoggedIn ? <JobRender /> : <Login />}
+              />
+              <Route path="/register" element={<Register />} />
+              <Route path="/" element={token ? <Post /> : <Login />} />
+              <Route
+                path="/login"
+                element={isLoggedIn ? <Personal /> : <Login />}
+              />
+              <Route path="/newJob" element={<JobPost />} />
+            </Routes>
+          </main>
         </div>
-        <Routes>
-          <Route path="/about" element={<About />} />
-          <Route path="/user/:id" element={<User />} />
-          <Route path="/job/:id" element={<JobDetails />} />
-          <Route
-            path="/job"
-            exact
-            element={isLoggedIn ? <JobRender /> : <Login />}
-          />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={token ? <Post /> : <Login />} />
-          <Route
-            path="/login"
-            element={isLoggedIn ? <Personal /> : <Login />}
-          />
-          <Route path="/newJob" element={<JobPost />} />
-        </Routes>
       </userContext.Provider>
     </>
   );

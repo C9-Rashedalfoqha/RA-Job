@@ -1,13 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { userContext } from "../../App";
 import axios from "axios";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Avatar from "@mui/material/Avatar";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import "./personal.css";
 import { Link } from "react-router-dom";
 
 const Personal = () => {
@@ -15,7 +8,6 @@ const Personal = () => {
   const [image, setImage] = useState(null);
   const [url, setUrl] = useState("");
   const [userPosts, setUserPosts] = useState([]);
-  const [jobDetail, setJobDetail] = useState(null);
 
   const {
     userPersonal,
@@ -27,7 +19,6 @@ const Personal = () => {
     email,
     setEmail,
     password,
-    setPassword,
     phoneNumber,
     setPhoneNumber,
     experience,
@@ -35,10 +26,31 @@ const Personal = () => {
     skill,
     setSkill,
     token,
+    setJobDetail
   } = useContext(userContext);
 
-  const uploadImage = async () => {
-    if (image) {
+  const userId = userPersonal?._id;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!userId) return;
+        const result = await axios.get(
+          `https://ra-job.onrender.com//job/user/${userId}`
+        );
+        setUserPosts(result.data.job);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  useEffect(() => {
+    if (!image) return;
+
+    const upload = async () => {
       const data = new FormData();
       data.append("file", image);
       data.append("upload_preset", "wq8dmxe2");
@@ -50,44 +62,18 @@ const Personal = () => {
           data
         );
         setUrl(response.data.url);
-        console.log(response);
       } catch (err) {
         console.log(err);
       }
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios.get(
-          `https://ra-job.onrender.com//job/user/${userPersonal._id}`
-        );
-        console.log(result);
-        setUserPosts(result.data.job);
-        uploadImage();
-      } catch (err) {
-        console.log(err);
-      }
-      uploadImage();
     };
 
-    fetchData();
-  }, [userPersonal._id, image]);
+    upload();
+  }, [image]);
 
   const updateData = async () => {
-    const isDataModified =
-      first !== userPersonal.FirstName ||
-      last !== userPersonal.lastName ||
-      email !== userPersonal.Email ||
-      phoneNumber !== userPersonal.phoneNumber ||
-      experience !== userPersonal.Experience ||
-      skill !== userPersonal.Skills ||
-      url !== userPersonal.photo;
-
     try {
       const result = await axios.put(
-        `https://ra-job.onrender.com//register/update/${userPersonal._id}`,
+        `https://ra-job.onrender.com//register/update/${userId}`,
         {
           FirstName: first,
           lastName: last,
@@ -105,235 +91,177 @@ const Personal = () => {
         }
       );
       setUserPersonal({ ...userPersonal, ...result.data.result });
-      console.log(result);
-      uploadImage();
     } catch (err) {
       console.log(err.message);
     }
-    {
-      setUpdate(!update);
-    }
+    setUpdate(false);
   };
 
   return (
-    <div className="container mt-4">
-      <Row className="justify-content-center">
-        <Col md={4}>
-          <div className="card">
+    <section className="px-4 py-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        <div className="grid gap-6 lg:grid-cols-[360px,1fr]">
+          <div className="rounded-3xl bg-white shadow-soft ring-1 ring-slate-100">
             {userPersonal.photo && (
               <img
                 src={userPersonal.photo}
-                alt="User Photo"
-                className="card-img-top img-fluid"
+                alt="User"
+                className="h-56 w-full rounded-t-3xl object-cover"
               />
             )}
-            <div className="card-body">
-              <label for="floatingInput">Name:</label>
-              <h5 className="card-title">
-                {userPersonal.FirstName}
-                {userPersonal.lastName}
-              </h5>{" "}
-              <label for="floatingInput">Email:</label>
-              <p className="card-text">{userPersonal.Email}</p>
-              <label for="floatingInput">phoneNumber:</label>
-              <p className="card-text">{userPersonal.phoneNumber}</p>
-              <div className="form-group mt-2">
-                {update ? (
-                  <>
-                    <label htmlFor="inp-img">
-                      <Avatar
-                        alt="User"
-                        src={userPersonal.photo}
-                        className="avatar"
-                      />
-                      <input
-                        type="file"
-                        id="inp-img"
-                        style={{ display: "none" }}
-                        onChange={(e) => {
-                          setImage(e.target.files[0]);
-                        }}
-                      />
-                    </label>
-                  </>
-                ) : (
-                  <Avatar
-                    alt="User"
-                    src={userPersonal.photo}
-                    className="avatar"
-                  />
-                )}
+            <div className="space-y-4 px-6 py-6">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-widest text-brand">
+                  Profile
+                </p>
+                <h2 className="mt-2 font-display text-2xl font-bold text-ink">
+                  {userPersonal.FirstName} {userPersonal.lastName}
+                </h2>
               </div>
-              <div className="form-group mt-2">
-                {update ? (
-                  <TextField
-                    className="form-control"
-                    label="First Name"
-                    value={first}
-                    onChange={(e) => setFirst(e.target.value)}
-                    placeholder="Enter your first name"
-                  />
-                ) : (
-                  <p className="per"></p>
-                )}
-              </div>
-              <div className="form-group mt-2">
-                {update ? (
-                  <TextField
-                    className="form-control"
-                    label="Last Name"
-                    value={last}
-                    onChange={(e) => setLast(e.target.value)}
-                    placeholder="Enter your last name"
-                  />
-                ) : (
-                  <>
-                    <label for="floatingInput">Name:</label>
-                    <p className="per">
-                      {userPersonal.FirstName} {userPersonal.lastName}
-                    </p>
-                  </>
-                )}
-              </div>
-              <div className="form-group mt-2">
-                {update ? (
-                  <TextField
-                    className="form-control"
-                    label="Email"
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                  />
-                ) : (
-                  <>
-                    <label for="floatingInput">Email:</label>
 
-                    <p className="per">{userPersonal.Email}</p>
-                  </>
-                )}
+              <div className="space-y-3 text-sm text-ink">
+                <p className="font-semibold text-ink-soft">
+                  {userPersonal.Email}
+                </p>
+                <p className="text-ink-soft">{userPersonal.phoneNumber}</p>
+                <p className="text-ink-soft">
+                  Experience: {userPersonal.Experience || "N/A"}
+                </p>
+                <p className="text-ink-soft">
+                  Skills: {userPersonal.Skills || "N/A"}
+                </p>
               </div>
-              <div className="form-group mt-2">
-                {update ? (
-                  <TextField
-                    className="form-control"
-                    label="Phone Number"
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="Enter your phone number"
-                  />
-                ) : (
-                  <>
-                    <label for="floatingInput">phoneNumber:</label>
-                    <p className="per">{userPersonal.phoneNumber}</p>
-                  </>
-                )}
-              </div>
-              <div className="form-group mt-2">
-                {update ? (
-                  <TextField
-                    className="form-control"
-                    label="Experience"
-                    onChange={(e) => setExperience(e.target.value)}
-                    placeholder="Enter your experience"
-                  />
-                ) : (
-                  <>
-                    <label>Experience:</label>
-                    <p className="per">{userPersonal.Experience}</p>
-                  </>
-                )}
-              </div>
-              <div className="form-group mt-2">
-                {update ? (
-                  <TextField
-                    className="form-control"
-                    label="Skills"
-                    onChange={(e) => setSkill(e.target.value)}
-                    placeholder="Enter your skills"
-                  />
-                ) : (
-                  <>
-                    <label>Skills:</label>
-                    <p className="per">{userPersonal.Skills}</p>
-                  </>
-                )}
-              </div>
-              <div className="form-group mt-2">
-                {update ? (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      updateData();
-                      setUpdate(!update);
+
+              {update && (
+                <label className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-dashed border-slate-200 px-4 py-3 text-sm font-semibold text-ink-softer hover:border-brand/40">
+                  Update photo
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      setImage(e.target.files[0]);
                     }}
-                    className="mt-3"
-                  >
-                    Update user information
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setUpdate(!update)}
-                    className="mt-3"
-                  >
-                    Edit information
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </Col>
-
-        <Col md={6}>
-          {userPosts.map((post) => (
-            <div key={post._id} className="card mb-4">
-              {post.photo ? (
-                <Link
-                  to={`/job/${post._id}`}
-                  onClick={() => {
-                    setJobDetail(post._id);
-                  }}
-                  className="text-decoration-none text-dark"
-                >
-                  <img
-                    src={post.photo}
-                    alt="Post Photo"
-                    className="card-img-top img-fluid"
                   />
-                </Link>
-              ) : (
-                <></>
+                </label>
               )}
 
-              <div className="card-body">
-                <Link
-                  to={`/job/${post._id}`}
-                  onClick={() => {
-                    setJobDetail(post._id);
-                  }}
-                  className="text-decoration-none text-dark"
-                >
-                  <h5 className="card-title">{post.title}</h5>
-                </Link>
-                <p className="card-text">Job Address: {post.jobAddress}</p>
-                <p className="card-text">Description: {post.description}</p>
-                <p className="card-text">Salary: {post.salary}</p>
-                {post.comments && post.comments.length > 0 && (
-                  <div>
-                    <h6>Comments:</h6>
-                    <ul className="list-unstyled">
-                      {post.comments.map((comment) => (
-                        <li key={comment._id}>{comment.text}</li>
-                      ))}
-                    </ul>
-                  </div>
+              <div className="space-y-3">
+                {update && (
+                  <>
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                      placeholder="First Name"
+                      value={first || userPersonal.FirstName || ""}
+                      onChange={(e) => setFirst(e.target.value)}
+                    />
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                      placeholder="Last Name"
+                      value={last || userPersonal.lastName || ""}
+                      onChange={(e) => setLast(e.target.value)}
+                    />
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                      placeholder="Email"
+                      value={email || userPersonal.Email || ""}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                      placeholder="Phone Number"
+                      value={phoneNumber || userPersonal.phoneNumber || ""}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                      placeholder="Experience"
+                      value={experience || userPersonal.Experience || ""}
+                      onChange={(e) => setExperience(e.target.value)}
+                    />
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                      placeholder="Skills"
+                      value={skill || userPersonal.Skills || ""}
+                      onChange={(e) => setSkill(e.target.value)}
+                    />
+                  </>
                 )}
               </div>
+
+              <button
+                className="w-full rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-dark"
+                onClick={() => {
+                  if (update) {
+                    updateData();
+                  }
+                  setUpdate(!update);
+                }}
+                type="button"
+              >
+                {update ? "Save profile" : "Edit profile"}
+              </button>
             </div>
-          ))}
-        </Col>
-      </Row>
-    </div>
+          </div>
+
+          <div className="space-y-6">
+            {userPosts.map((post) => (
+              <article
+                key={post._id}
+                className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm"
+              >
+                {post.photo && (
+                  <Link
+                    to={`/job/${post._id}`}
+                    onClick={() => {
+                      setJobDetail(post._id);
+                    }}
+                  >
+                    <img
+                      src={post.photo}
+                      alt={post.title}
+                      className="h-64 w-full object-cover"
+                    />
+                  </Link>
+                )}
+
+                <div className="space-y-3 px-6 py-5">
+                  <Link
+                    to={`/job/${post._id}`}
+                    onClick={() => {
+                      setJobDetail(post._id);
+                    }}
+                    className="font-display text-2xl font-semibold text-ink"
+                  >
+                    {post.title}
+                  </Link>
+                  <p className="text-sm text-ink-soft">
+                    Job Address: {post.jobAddress}
+                  </p>
+                  <p className="text-sm text-ink-soft">
+                    Description: {post.description}
+                  </p>
+                  <p className="text-sm text-ink-soft">
+                    Salary: {post.salary}
+                  </p>
+                  {post.comments && post.comments.length > 0 && (
+                    <div className="rounded-2xl bg-slate-50/70 p-4">
+                      <h6 className="text-sm font-semibold text-ink">
+                        Comments
+                      </h6>
+                      <ul className="mt-2 space-y-2 text-sm text-ink-soft">
+                        {post.comments.map((comment) => (
+                          <li key={comment._id}>{comment.text}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

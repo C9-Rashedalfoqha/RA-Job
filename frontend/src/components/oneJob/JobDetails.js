@@ -1,19 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { userContext } from "../../App";
 import { IoSendSharp } from "react-icons/io5";
 import emailjs from "emailjs-com";
-import "./Job.css";
 
 const JobDetails = () => {
-  const navigate = useNavigate();
-  const { JobDetail, token, userPersonal, setUserPersonal } =
-    useContext(userContext);
+  const { token, userPersonal } = useContext(userContext);
   const { id } = useParams();
   const [jobDetails, setJobDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [comment, setComment] = useState("");
   const [Apply, setApply] = useState(false);
 
   const apply = () => {
@@ -40,14 +36,14 @@ const JobDetails = () => {
       });
   };
   useEffect(() => {
+    if (!id) return;
     axios
       .get(`https://r-a-jobsearch.onrender.com/job/${id}`, {
         headers: {
-          authorization: `Bearer ${token}`
-        }
+          authorization: `Bearer ${token}`,
+        },
       })
       .then((result) => {
-        console.log(result);
         setJobDetails(result.data.message);
         setLoading(false);
       })
@@ -55,63 +51,78 @@ const JobDetails = () => {
         console.log(err);
         setLoading(false);
       });
-  }, []);
+  }, [id, token]);
 
   return (
-    <div className="container my-4">
-      {loading && <p>Loading...</p>}
-      {!loading && jobDetails && (
-        <>
-          <div className="row">
-            <div className="col-md-6">
-              {jobDetails.photo ? (
-                <img src={jobDetails.photo} className="img-fluid" alt="Job" />
-              ) : (
-                <img
-                  src="https://images.pexels.com/photos/4439454/pexels-photo-4439454.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                  className="img-fluid"
-                  alt="Job"
-                />
+    <section className="px-4 py-8">
+      <div className="mx-auto max-w-5xl">
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="h-14 w-14 animate-spin rounded-full border-4 border-slate-200 border-t-brand" />
+          </div>
+        )}
+        {!loading && jobDetails && (
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="overflow-hidden rounded-3xl bg-white shadow-soft">
+              <img
+                src={
+                  jobDetails.photo ||
+                  "https://images.pexels.com/photos/4439454/pexels-photo-4439454.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                }
+                className="h-full w-full object-cover"
+                alt="Job"
+              />
+            </div>
+            <div className="rounded-3xl bg-white p-8 shadow-soft ring-1 ring-slate-100">
+              <p className="text-sm font-semibold uppercase tracking-widest text-brand">
+                Open role
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-bold text-ink">
+                {jobDetails.title}
+              </h2>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl bg-slate-50/60 p-4">
+                  <p className="text-xs uppercase tracking-widest text-ink-softer">
+                    Location
+                  </p>
+                  <p className="mt-1 text-lg font-semibold text-ink">
+                    {jobDetails.jobAddress}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-slate-50/60 p-4">
+                  <p className="text-xs uppercase tracking-widest text-ink-softer">
+                    Salary
+                  </p>
+                  <p className="mt-1 text-lg font-semibold text-ink">
+                    ${jobDetails.salary}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 space-y-3 text-base leading-relaxed text-ink-soft">
+                <p className="font-semibold text-ink">About the role</p>
+                <p>{jobDetails.description}</p>
+              </div>
+              <button
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 font-semibold text-white shadow-soft hover:bg-brand-dark"
+                onClick={() => {
+                  apply();
+                  setApply(true);
+                }}
+              >
+                <IoSendSharp />
+                Apply now
+              </button>
+              {Apply && (
+                <p className="mt-3 rounded-2xl bg-green-50 px-4 py-3 text-sm font-semibold text-green-700">
+                  Application sent! Keep an eye on your inbox for the hiring
+                  team's reply.
+                </p>
               )}
             </div>
-            <div className="col-md-6">
-              <div className="info">
-                <h2>{jobDetails.title}</h2>
-                <div className="details">
-                  <div>
-                    <label>Address:</label>
-                    <p>{jobDetails.jobAddress}</p>
-                  </div>
-                  <div>
-                    <label>Salary:</label>
-                    <p>{jobDetails.salary}</p>
-                  </div>
-                </div>
-                <div className="description">
-                  <label>Description:</label>
-                  <p>{jobDetails.description}</p>
-                </div>
-                <button
-                  className="btn btn-primary mt-3"
-                  onClick={() => {
-                    apply();
-                    setApply(true);
-                  }}
-                >
-                  Apply
-                </button>
-                {Apply && (
-                  <p className="mess">
-                    The request has been sent. Waiting for a response to your
-                    email
-                  </p>
-                )}
-              </div>
-            </div>
           </div>
-        </>
-      )}
-    </div>
+        )}
+      </div>
+    </section>
   );
 };
 

@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useState, useContext, useEffect } from "react";
 import { userContext } from "../../App";
 import { useParams } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const User = () => {
   const [userPosts, setUserPosts] = useState([]);
@@ -19,59 +18,65 @@ const User = () => {
         },
       })
       .then((result) => {
-        console.log(result);
         setUserPosts(result.data.job);
         setUserDetails(result.data.job[0].userId);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [id, token]);
 
   return (
-    <div className="container mt-4">
-      <div className="row">
-        <div className="col-md-4">
-          <div className="card">
-           {UserDetails.photo ?  <img
-              src={UserDetails.photo}
-              alt="User Photo"
-              className="card-img-top img-fluid"
-            />:<img
-            src="https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Picture.png"
-            alt="User Photo"
-            className="card-img-top img-fluid"
-          />}
-            <div className="card-body">
-              <h5 className="card-title">
-                {UserDetails.FirstName} {UserDetails.lastName}
-              </h5>
-              <p className="card-text">{UserDetails.Email}</p>
-              <p className="card-text">{UserDetails.phoneNumber}</p>
-            </div>
+    <section className="px-4 py-8">
+      <div className="mx-auto max-w-6xl grid gap-6 lg:grid-cols-[360px,1fr]">
+        <div className="rounded-3xl bg-white shadow-soft ring-1 ring-slate-100">
+          <img
+            src={
+              UserDetails.photo ||
+              "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Picture.png"
+            }
+            alt={`${UserDetails.FirstName || "User"} avatar`}
+            className="h-64 w-full rounded-t-3xl object-cover"
+          />
+          <div className="space-y-2 px-6 py-6">
+            <h5 className="font-display text-2xl font-semibold text-ink">
+              {UserDetails.FirstName} {UserDetails.lastName}
+            </h5>
+            <p className="text-sm text-ink-soft">{UserDetails.Email}</p>
+            <p className="text-sm text-ink-soft">{UserDetails.phoneNumber}</p>
           </div>
         </div>
-        <div className="col-md-6">
+
+        <div className="space-y-6">
           {userPosts.map((post) => (
-            <div key={post._id} className="card mb-4">
-              {post.photo ? (
+            <article
+              key={post._id}
+              className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm"
+            >
+              {post.photo && (
                 <img
                   src={post.photo}
-                  alt="Post Photo"
-                  className="card-img-top img-fluid"
+                  alt={post.title}
+                  className="h-64 w-full object-cover"
                 />
-              ) : (
-                <></>
               )}
-              <div className="card-body">
-                <h5 className="card-title">{post.title}</h5>
-                <p className="card-text">Job Address: {post.jobAddress}</p>
-                <p className="card-text">Description: {post.description}</p>
-                <p className="card-text">Salary: {post.salary}</p>
+              <div className="space-y-3 px-6 py-5">
+                <h5 className="font-display text-2xl font-semibold text-ink">
+                  {post.title}
+                </h5>
+                <p className="text-sm text-ink-soft">
+                  Job Address: {post.jobAddress}
+                </p>
+                <p className="text-sm text-ink-soft">
+                  Description: {post.description}
+                </p>
+                <p className="text-sm text-ink-soft">Salary: {post.salary}</p>
                 {post.comments && post.comments.length > 0 && (
-                  <div>
-                    <h6>Comments:</h6>
-                    <ul className="list-unstyled">
+                  <div className="rounded-2xl bg-slate-50/70 p-4">
+                    <h6 className="text-sm font-semibold text-ink">
+                      Comments
+                    </h6>
+                    <ul className="mt-2 space-y-2 text-sm text-ink-soft">
                       {post.comments.map((comment) => (
                         <li key={comment._id}>{comment.text}</li>
                       ))}
@@ -79,11 +84,11 @@ const User = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

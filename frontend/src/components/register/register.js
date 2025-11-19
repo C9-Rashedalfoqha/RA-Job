@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { userContext } from "../../App";
-import "../register/register.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -51,130 +50,154 @@ const Register = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <form>
-            <h2 className="mb-4">Register</h2>
+    <section className="px-4 py-12">
+      <div className="mx-auto max-w-5xl rounded-3xl bg-white p-8 shadow-soft ring-1 ring-slate-100 lg:p-12">
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-brand">
+              Join RA Job
+            </p>
+            <h1 className="mt-3 font-display text-4xl font-bold text-ink">
+              Create your profile
+            </h1>
+            <p className="mt-4 text-sm text-ink-softer">
+              Share your experience so we can match you with curated job
+              opportunities and streamline your hiring journey.
+            </p>
+            <div className="mt-8 space-y-4 text-sm text-ink-soft">
+              <p>• Showcase your skills to top employers</p>
+              <p>• Track applications with a personalized dashboard</p>
+              <p>• Receive curated alerts based on your preferences</p>
+            </div>
+          </div>
 
-            <div className="form-group">
-              <label htmlFor="formFirstName">First Name</label>
-              <input
-                type="text"
-                className="form-control"
-                id="formFirstName"
-                placeholder="Enter your first name"
-                minLength="3"
-                maxLength="10"
-                onChange={(e) => setFirst(e.target.value)}
-                required
-              />
+          <form className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="block text-sm font-semibold text-ink">
+                First Name
+                <input
+                  type="text"
+                  id="formFirstName"
+                  className="mt-2 w-full rounded-2xl border-slate-200 bg-slate-50/70 shadow-sm focus:border-brand focus:bg-white focus:ring-brand/30"
+                  placeholder="Rashed"
+                  minLength={3}
+                  maxLength={20}
+                  onChange={(e) => setFirst(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="block text-sm font-semibold text-ink">
+                Last Name
+                <input
+                  type="text"
+                  id="formLastName"
+                  className="mt-2 w-full rounded-2xl border-slate-200 bg-slate-50/70 shadow-sm focus:border-brand focus:bg-white focus:ring-brand/30"
+                  placeholder="Alfoqha"
+                  minLength={3}
+                  maxLength={20}
+                  onChange={(e) => setLast(e.target.value)}
+                  required
+                />
+              </label>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="formLastName">Last Name</label>
-              <input
-                type="text"
-                className="form-control"
-                id="formLastName"
-                placeholder="Enter your last name"
-                minLength="3"
-                maxLength="10"
-                onChange={(e) => setLast(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="formEmail">Email</label>
+            <label className="block text-sm font-semibold text-ink">
+              Email
               <input
                 type="email"
-                className="form-control"
                 id="formEmail"
-                placeholder="Enter your email"
+                className="mt-2 w-full rounded-2xl border-slate-200 bg-slate-50/70 shadow-sm focus:border-brand focus:bg-white focus:ring-brand/30"
+                placeholder="you@email.com"
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-            </div>
+            </label>
 
-            <div className="form-group">
-              <label htmlFor="formPassword">Password</label>
-              <div className="input-group">
+            <label className="block text-sm font-semibold text-ink">
+              Password
+              <div className="mt-2 flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 px-3 focus-within:border-brand focus-within:bg-white focus-within:ring-2 focus-within:ring-brand/20">
                 <input
                   type={passwordVisible ? "text" : "password"}
-                  className="form-control"
                   id="formPassword"
-                  placeholder="Enter your password"
-                  minLength="8"
-                  maxLength="50"
+                  className="w-full border-none bg-transparent py-2 font-medium text-ink focus:outline-none"
+                  placeholder="Minimum 8 characters"
+                  minLength={8}
+                  maxLength={50}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <div className="input-group-append">
-                  <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    onClick={() => setPasswordVisible(!passwordVisible)}
-                  >
-                    {passwordVisible ? "Hide" : "Show"}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  className="text-sm font-semibold text-brand"
+                >
+                  {passwordVisible ? "Hide" : "Show"}
+                </button>
               </div>
+            </label>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="block text-sm font-semibold text-ink">
+                Phone Number
+                <input
+                  type="tel"
+                  id="formPhoneNumber"
+                  className="mt-2 w-full rounded-2xl border-slate-200 bg-slate-50/70 shadow-sm focus:border-brand focus:bg-white focus:ring-brand/30"
+                  placeholder="07XXXXXXXX"
+                  minLength={10}
+                  maxLength={15}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="block text-sm font-semibold text-ink">
+                Experience
+                <input
+                  type="text"
+                  id="formExperience"
+                  className="mt-2 w-full rounded-2xl border-slate-200 bg-slate-50/70 shadow-sm focus:border-brand focus:bg-white focus:ring-brand/30"
+                  placeholder="3+ years frontend"
+                  onChange={(e) => setExperience(e.target.value)}
+                />
+              </label>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="formPhoneNumber">Phone Number</label>
-              <input
-                type="tel"
-                className="form-control"
-                id="formPhoneNumber"
-                placeholder="Enter your phone number"
-                minLength="10"
-                maxLength="10"
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="formExperience">Experience</label>
+            <label className="block text-sm font-semibold text-ink">
+              Skills & Qualifications
               <input
                 type="text"
-                className="form-control"
-                id="formExperience"
-                placeholder="Enter your experience "
-                onChange={(e) => setExperience(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="formSkills">Skills & Qualifications</label>
-              <input
-                type="text"
-                className="form-control"
                 id="formSkills"
-                placeholder="Enter your skills & qualifications "
+                className="mt-2 w-full rounded-2xl border-slate-200 bg-slate-50/70 shadow-sm focus:border-brand focus:bg-white focus:ring-brand/30"
+                placeholder="React, Node.js, UI/UX"
                 onChange={(e) => setSkill(e.target.value)}
               />
-            </div>
+            </label>
 
-            {error && <p className="text-danger">{error}</p>}
+            {error && (
+              <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">
+                {error}
+              </p>
+            )}
 
             <button
               type="button"
-              className={`btn btn-primary ${isLoading ? "disabled" : ""}`}
+              className="w-full rounded-2xl bg-ink px-4 py-3 text-base font-semibold text-white shadow-soft transition hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-slate-400"
               onClick={handleRegister}
+              disabled={isLoading}
             >
-              {isLoading ? "Registering..." : "Register"}
+              {isLoading ? "Creating account..." : "Create account"}
             </button>
 
-            <p className="mt-3">
-              Already have an account? <Link to="/login">Login</Link>
+            <p className="text-center text-sm text-ink-soft">
+              Already have an account?{" "}
+              <Link to="/login" className="font-semibold text-brand hover:text-brand-dark">
+                Log in
+              </Link>
             </p>
           </form>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
