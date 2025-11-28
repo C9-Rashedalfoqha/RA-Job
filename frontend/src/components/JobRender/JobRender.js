@@ -18,7 +18,7 @@ const JobRender = () => {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://r-a-jobsearch.onrender.com/job")
+      .get(`${process.env.URL_SERVER}/job`)
       .then((result) => {
         setDashBoard(result.data.posts);
       })

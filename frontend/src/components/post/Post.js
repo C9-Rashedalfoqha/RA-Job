@@ -38,7 +38,7 @@ const Post = () => {
 
   useEffect(() => {
     axios
-      .get("https://r-a-jobsearch.onrender.com/post/get", {
+      .get(`${process.env.URL_SERVER}/post/get`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -109,7 +109,7 @@ const Post = () => {
                 onClick={() => {
                   axios
                     .post(
-                      "https://r-a-jobsearch.onrender.com/post",
+                     `${process.env.URL_SERVER}/post`,
                       {
                         description: newPostDescription,
                         photo: url,
@@ -206,7 +206,7 @@ const Post = () => {
                       onClick={() => {
                         axios
                           .delete(
-                            `https://r-a-jobsearch.onrender.com/post/delete/${elem._id}`,
+                            `${process.env.URL_SERVER}/post/delete/${elem._id}`,
                             {
                               headers: {
                                 authorization: `Bearer ${token}`,
@@ -254,7 +254,7 @@ const Post = () => {
                     onClick={() => {
                       axios
                         .post(
-                          `https://r-a-jobsearch.onrender.com/post/${elem._id}/comments/`,
+                          `${process.env.URL_SERVER}/post/${elem._id}/comments/`,
                           {
                             comment: comment,
                           },
@@ -308,7 +308,7 @@ const Post = () => {
                             onClick={() => {
                               axios
                                 .put(
-                                  `https://r-a-jobsearch.onrender.com/post/update/${elem._id}`,
+                                  `${process.env.URL_SERVER}/post/update/${elem._id}`,
                                   {
                                     description: description,
                                   },

@@ -38,7 +38,7 @@ const JobDetails = () => {
   useEffect(() => {
     if (!id) return;
     axios
-      .get(`https://r-a-jobsearch.onrender.com/job/${id}`, {
+      .get(`${process.env.URL_SERVER}/job/${id}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },

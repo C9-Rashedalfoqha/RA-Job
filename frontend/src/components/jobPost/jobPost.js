@@ -158,7 +158,7 @@ const JobPost = () => {
               onClick={() => {
                 axios
                   .post(
-                    "https://ra-job.onrender.com/job",
+                    `${process.env.URL_SERVER}/job`,
                     {
                       filterTitle: filter,
                       title: job,

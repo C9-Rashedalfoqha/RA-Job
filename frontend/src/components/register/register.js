@@ -30,7 +30,7 @@ const Register = () => {
     setError(null);
 
     axios
-      .post("https://r-a-jobsearch.onrender.com/register", {
+      .post(`${process.env.URL_SERVER}/register`, {
         FirstName: first,
         lastName: last,
         Email: email,
